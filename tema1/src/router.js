@@ -64,7 +64,6 @@ function getHandler(url, method) {
 }
 
 function getResponse(url, method) {
-  console.log("m");
   const response = getHandler(url, method)();
 
   if (typeof response.data !== "string") {
