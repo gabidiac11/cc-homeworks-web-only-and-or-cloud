@@ -1,3 +1,49 @@
 body {
-    background-color: gray;
+  box-sizing: border-box;
+  --foreground-color: #f2f2f2;
+  --primary-color: #696969;
+  --backdrop-color: rgba(0, 0, 0, 0.2);
+}
+
+/* ===============
+   LOADER
+   =============== */
+.loader-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--backdrop-color);
+}
+
+.loader {
+  border: 7px solid var(--foreground-color);
+  border-radius: 50%;
+  border-top: 7px solid var(--primary-color);
+  width: 40px;
+  height: 40px;
+  -webkit-animation: spin 0.4s linear infinite;
+  animation: spin 0.4s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
