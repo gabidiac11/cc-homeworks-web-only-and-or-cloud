@@ -6,7 +6,13 @@ const port = process.env.PORT || 5000;
 const contentTypes = {
   json: "application/json",
   html: "text/html",
-  plain: "text/plain",
+  txt: "text/plain",
+  css: "text/css",
+  gif: "image/gif",
+  jpg: "image/jpeg",
+  png: "image/png",
+  svg: "image/svg+xml",
+  js: "application/javascript",
 };
 
 module.exports.port = port;
