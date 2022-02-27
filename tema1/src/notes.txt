@@ -1,0 +1,3 @@
+weaknesses:
+- db depends on sqlite -> a abstraction will help
+- mock &/or error handling depends on interface given by axios

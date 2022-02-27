@@ -1,7 +1,9 @@
 const indexRoutes = require("./controllers/index");
+const metricsRoutes = require("./controllers/metrics");
 
 const routes = [
-  ...indexRoutes
+  ...indexRoutes,
+  ...metricsRoutes
 ];
 
 module.exports.routes = routes;

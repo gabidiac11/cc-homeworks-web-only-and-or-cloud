@@ -1,6 +1,8 @@
 const { default: axios } = require("axios");
 const mock = require("./../mock/mockResponses");
 const constants = require("./../constants");
+const db = require("./../database/db");
+
 const contentTypes = constants.contentTypes;
 const googleAPIKey = constants.googleAPIKey;
 const useMock = constants.useMock;
@@ -49,20 +51,50 @@ const getWikiResponse = (countryName, bookName) => {
 };
 
 const index = async () => {
+  /**
+   * @param {IResponse} response
+   */
+  const insertLogs = (response, latency = -1) => {
+    const sql = `
+        INSERT INTO 
+            logs(
+                code,
+                headers,
+                url,
+                data,
+                latency
+                )
+            VALUES (
+              ${response.status},
+              '${JSON.stringify(response.headers)}',
+              '${response.config.url}',
+              '${JSON.stringify(response.data)}',
+              ${latency}
+            )
+    `;
+    return db.sql(sql);
+  };
+
+  let time = Date.now();
   try {
     // fetch books
     const bookResponse = await getBooksResponse();
     const book = bookResponse.data.items[0];
     const countryCode = book.accessInfo.country;
     const bookTitle = book.volumeInfo.title;
+    await insertLogs(bookResponse, Date.now() - time);
 
     // fetch full name
+    time = Date.now();
     const countryNameResponse = await getCountryResponse(countryCode);
     const countryName = countryNameResponse.data.name;
-    
+    await insertLogs(countryNameResponse, Date.now() - time);
+
     //fetch wiki of book using country and book name
+    time = Date.now();
     const wikiResponse = await getWikiResponse(countryName, bookTitle);
     const wikiData = wikiResponse.data;
+    await insertLogs(wikiResponse, Date.now() - time);
 
     return {
       headers: { "Content-Type": contentTypes.json },
@@ -71,11 +103,16 @@ const index = async () => {
         book,
         bookTitle,
         countryName,
-        wikiData
+        wikiData,
       },
     };
   } catch (err) {
-    console.log(err);
+    const isHttpRequestError = !!err?.response?.config?.url;
+    if (isHttpRequestError) {
+      insertLogs(err.response, Date.now() - time);
+    }
+
+    console.log("error for request", err);
     return {
       headers: { "Content-Type": contentTypes.json },
       code: 500,
@@ -86,7 +123,7 @@ const index = async () => {
   }
 };
 
-const indexRoutes = [
+module.exports = [
   {
     path: "/api/data",
     method: "GET",
@@ -94,4 +131,13 @@ const indexRoutes = [
   },
 ];
 
-module.exports = indexRoutes;
+/**
+ * @typedef IResponse
+ * @type {object}
+ * @property  {any} data
+ * @property  {number} status
+ * @property  {string} statusText
+ * @property  {object} headers
+ * @property  {object} config
+ * @property  {object} request?
+ */
