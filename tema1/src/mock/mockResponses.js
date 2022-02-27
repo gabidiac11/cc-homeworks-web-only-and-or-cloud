@@ -13,6 +13,8 @@ const getBooksMock = withPromise({
   headers: {},
   config: {
     url: "https://ceva-books.com",
+    method: "get",
+    data: "",
   },
   data: {
     items: [
@@ -104,6 +106,8 @@ const getCountryMock = withPromise({
   headers: {},
   config: {
     url: "https://ceva-country.com",
+    method: "get",
+    data: "",
   },
   data: {
     name: "Romania",
@@ -171,6 +175,8 @@ const getWikiMock = withPromise({
   status: 200,
   config: {
     url: "https://ceva-wikipediat.com",
+    method: "get",
+    data: "",
   },
   data: ` wikipediat data `,
 });

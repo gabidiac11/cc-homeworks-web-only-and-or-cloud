@@ -13,12 +13,14 @@ const db = new sqlite3.Database(dbPath, (err) => {
 const createTableSql = `
     CREATE TABLE IF NOT EXISTS logs (
         log_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        code INTEGER,
-        headers text,
+        status INTEGER,
+        method text,
         url text,
+        latency INTEGER DEFAULT -1,
         data text,
-        date DEFAULT CURRENT_TIMESTAMP,
-        latency INTEGER DEFAULT -1 
+        headers text,
+        req_params text,
+        date DEFAULT CURRENT_TIMESTAMP
     );
 `;
 

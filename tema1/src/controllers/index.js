@@ -58,18 +58,22 @@ const index = async () => {
     const sql = `
         INSERT INTO 
             logs(
-                code,
-                headers,
+                status,
+                method,
                 url,
+                latency,
                 data,
-                latency
+                headers,
+                req_params
                 )
             VALUES (
               ${response.status},
-              '${JSON.stringify(response.headers)}',
+              '${response.config.method}',
               '${response.config.url}',
+               ${latency},
               '${JSON.stringify(response.data)}',
-              ${latency}
+              '${JSON.stringify(response.headers)}',
+              '${JSON.stringify(response.config.data)}'
             )
     `;
     return db.sql(sql);

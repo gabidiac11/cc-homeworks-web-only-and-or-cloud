@@ -8,7 +8,7 @@ const page = () => {
 
   const fetchData = async () => {
     const formatRow = (row) => {
-      ["data", "headers"].forEach((property) => {
+      ["data", "headers", "params"].forEach((property) => {
         if (row[property] && typeof row[property] === "string") {
           try {
             row[property] = JSON.parse(row[property]);
