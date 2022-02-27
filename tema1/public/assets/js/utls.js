@@ -32,4 +32,4 @@ export const stringToHTML = function (str) {
 };
 
 export const prettyStrigifyNode = (object) =>
-  stringToHTML(`<pre>${JSON.stringify(object, null, 2)}</pre>`);
+  stringToHTML(`<pre><code>${JSON.stringify(object, null, 2)}</code></pre>`);
