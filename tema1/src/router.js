@@ -71,6 +71,15 @@ function getPublicResourceFromUrl(url) {
   return fileName;
 }
 
+function getHtmlFileNameIfExists(fileName) {
+  if (fileName.indexOf(".") > -1) return null;
+
+  const fileNameHtml = `${fileName}.html`;
+  if (fs.existsSync(fileNameHtml)) return fileNameHtml;
+
+  return null;
+}
+
 function handlePublicResourceReq(req, res, fileName) {
   const type =
     contentTypes[path.extname(fileName).slice(1)] || contentTypes.txt;
@@ -86,9 +95,12 @@ function handlePublicResourceReq(req, res, fileName) {
   });
 }
 
-module.exports.handleRequest = handleRequest;
-module.exports.getPath = getPath;
-module.exports.getResponse = getResponse;
-module.exports.notFoundHandler = notFoundHandler;
-module.exports.getPublicResourceFromUrl = getPublicResourceFromUrl;
-module.exports.handlePublicResourceReq = handlePublicResourceReq;
+module.exports = {
+  handleRequest,
+  getPath,
+  getResponse,
+  notFoundHandler,
+  getPublicResourceFromUrl,
+  handlePublicResourceReq,
+  getHtmlFileNameIfExists
+};

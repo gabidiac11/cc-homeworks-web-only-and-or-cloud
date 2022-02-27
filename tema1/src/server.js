@@ -12,9 +12,14 @@ const server = http.createServer((req, res) => {
     return router.handleRequest(req, res);
   }
 
-  const fileName = router.getPublicResourceFromUrl(req.url);
-  if(!fs.existsSync(fileName)) {
-    return router.handleRequest(req, res);
+  let fileName = router.getPublicResourceFromUrl(req.url);
+  if (!fs.existsSync(fileName)) {
+    // handle case where url is referencing a html page without specifying extension
+    fileName = router.getHtmlFileNameIfExists(fileName);
+    if (!fileName) {
+      // handle as api request if no public resource is requested
+      return router.handleRequest(req, res);
+    }
   }
 
   router.handlePublicResourceReq(req, res, fileName);
