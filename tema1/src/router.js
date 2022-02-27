@@ -7,12 +7,14 @@ const pubDirName = path.join(__dirname, "../public");
 
 const routes = require("./routes").routes;
 
-const notFoundHandler = () => ({
-  headers: { "Content-Type": contentTypes.json },
-  code: 404,
-  data: { message: "NOT FOUND (unfortunately)" },
-});
-
+const notFoundHandler = () =>
+  new Promise((resolve) =>
+    resolve({
+      headers: { "Content-Type": contentTypes.json },
+      code: 404,
+      data: { message: "NOT FOUND (unfortunately)" },
+    })
+  );
 
 function getPath(url) {
   return new URL(`https://orice.com${url}`).pathname;
@@ -35,18 +37,24 @@ function getResponseHandler(url, method) {
   );
 }
 
-function getResponse(url, method) {
-  const response = getResponseHandler(url, method)();
+async function getResponse(url, method) {
+  const response = await getResponseHandler(url, method)();
 
   if (typeof response.data !== "string") {
-    response.data = JSON.stringify(response.data);
+    // handle circular stuff
+    try {
+      response.data = JSON.stringify(response.data);
+    } catch (err) {
+      response.data = "";
+      console.log("could not stringify", err);
+    }
   }
   return response;
 }
 
-function handleRequest(req, res) {
+async function handleRequest(req, res) {
   console.log(`Handle request by router...`);
-  const response = getResponse(req.url, req.method);
+  const response = await getResponse(req.url, req.method);
   console.log(`Response:`);
   console.log(response);
 

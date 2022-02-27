@@ -4,17 +4,17 @@ import Loader from "../common/loader.js";
 
 const page = () => {
   const mainNode = document.querySelector("main");
-  const laoder = new Loader();
+  const loader = new Loader();
   
   const fetchData = async () => {
-    laoder.show();
+    loader.show();
     try {
       const data = await (await fetch(`${baseUrl}/data`)).json();
       mainNode.appendChild(prettyStrigifyNode(data));
     } catch (err) {
       mainNode.appendChild(prettyStrigifyNode(err));
     } finally {
-      laoder.hide();
+      loader.hide();
     }
   };
 

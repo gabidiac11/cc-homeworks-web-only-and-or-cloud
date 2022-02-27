@@ -1,18 +1,7 @@
-const contentTypes = require("./constants").contentTypes;
+const indexRoutes = require("./controllers/index");
 
 const routes = [
-  {
-    path: "/api",
-    method: "GET",
-    handler: () => ({
-      headers: { "Content-Type": contentTypes.json },
-      code: 200,
-      data: {
-        message:
-          "You reach our api endpoint that is totaly working but not implemented yet",
-      },
-    }),
-  },
+  ...indexRoutes
 ];
 
 module.exports.routes = routes;
