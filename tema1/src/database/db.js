@@ -33,11 +33,11 @@ db.serialize(() => {
   });
 });
 
-const sql = (sql) => {
+const sql = (sql, params = []) => {
   console.log(`Executed sql stmt... "${sql}"`);
 
   return new Promise((resolve) => {
-    db.run(sql, (err) => {
+    db.run(sql, params, (err) => {
       if (err) {
         console.error(err.message);
         throw err;
@@ -48,11 +48,11 @@ const sql = (sql) => {
   });
 };
 
-const select = (sql) => {
+const select = (sql, params = []) => {
   console.log(`Executed sql stmt... "${sql}"`);
 
   return new Promise((resolve) => {
-    db.all(sql, [], (err, rows) => {
+    db.all(sql, params, (err, rows) => {
       if (err) {
         throw err;
       }

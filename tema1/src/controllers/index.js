@@ -5,13 +5,14 @@ const db = require("./../database/db");
 
 const contentTypes = constants.contentTypes;
 const googleAPIKey = constants.googleAPIKey;
+const wikiApiToken = constants.wikiApiToken;
+const wikiUserAgent = constants.wikiUserAgent;
 const useMock = constants.useMock;
 
 const getBooksResponse = () => {
   if (useMock) {
     return mock.getBooksMock();
   }
-
   return axios.get(
     `https://www.googleapis.com/books/v1/volumes?printType=books&q=dostoevsky+fyodor&maxResults=1&source=gbs_lp_bookshelf_list&key=${googleAPIKey}`
   );
@@ -21,33 +22,26 @@ const getCountryResponse = (countryCode) => {
   if (useMock) {
     return mock.getCountryMock();
   }
-
   return axios.get(`https://restcountries.com/v2/alpha/${countryCode}`);
 };
 
-const getWikiResponse = (countryName, bookName) => {
+const getWikiResponse = (languageCode, searchQuery) => {
   if (useMock) {
     return mock.getWikiMock();
   }
-
-  // TODO: use this information to do an actual request using js
-  // import requests
-  // https://api.wikimedia.org/wiki/Documentation/Code_samples/Search_Wikipedia
-  // language_code = 'en'
-  // search_query = 'solar system'
-  // number_of_results = 1
-  // headers = {
-  //   # 'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
-  //   'User-Agent': 'YOUR_APP_NAME (YOUR_EMAIL_OR_CONTACT_PAGE)'
-  // }
-
-  // base_url = 'https://api.wikimedia.org/core/v1/wikipedia/'
-  // endpoint = '/search/page'
-  // url = base_url + language_code + endpoint
-  // parameters = {'q': search_query, 'limit': number_of_results}
-  // response = requests.get(url, headers=headers, params=parameters)
-
-  return axios.get(`https://restcountries.com/v2/alpha`);
+  return axios.get(
+    `https://api.wikimedia.org/core/v1/wikipedia/${languageCode}/search/page?q=${encodeURIComponent(
+      searchQuery
+    )}&limit=5`,
+    {
+      config: {
+        headers: {
+          Authorization: `Bearer ${wikiApiToken}`,
+          "User-Agent": wikiUserAgent,
+        },
+      },
+    }
+  );
 };
 
 const index = async () => {
@@ -66,17 +60,17 @@ const index = async () => {
                 headers,
                 req_params
                 )
-            VALUES (
-              ${response.status},
-              '${response.config.method}',
-              '${response.config.url}',
-               ${latency},
-              '${JSON.stringify(response.data)}',
-              '${JSON.stringify(response.headers)}',
-              '${JSON.stringify(response.config.data)}'
-            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
-    return db.sql(sql);
+    return db.sql(sql, [
+      response.status,
+      response.config.method,
+      response.config.url,
+      latency,
+      JSON.stringify(response.data),
+      JSON.stringify(response.headers),
+      JSON.stringify(response.config.data),
+    ]);
   };
 
   let time = Date.now();
@@ -84,19 +78,23 @@ const index = async () => {
     // fetch books
     const bookResponse = await getBooksResponse();
     const book = bookResponse.data.items[0];
-    const countryCode = book.accessInfo.country;
+    const languageCode = book.accessInfo.country;
     const bookTitle = book.volumeInfo.title;
     await insertLogs(bookResponse, Date.now() - time);
 
     // fetch full name
     time = Date.now();
-    const countryNameResponse = await getCountryResponse(countryCode);
+    const countryNameResponse = await getCountryResponse(languageCode);
     const countryName = countryNameResponse.data.name;
+    const flag = countryNameResponse.data.flags.svg;
     await insertLogs(countryNameResponse, Date.now() - time);
 
-    //fetch wiki of book using country and book name
+    //fetch wiki of book using the search query formed by country and book name
     time = Date.now();
-    const wikiResponse = await getWikiResponse(countryName, bookTitle);
+    const wikiResponse = await getWikiResponse(
+      languageCode,
+      `${bookTitle} ${countryName}`
+    );
     const wikiData = wikiResponse.data;
     await insertLogs(wikiResponse, Date.now() - time);
 
@@ -106,7 +104,9 @@ const index = async () => {
       data: {
         book,
         bookTitle,
+        languageCode,
         countryName,
+        flag,
         wikiData,
       },
     };

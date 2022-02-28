@@ -2,9 +2,11 @@ import { baseUrl } from "../constants.js";
 import { prettyStrigifyNode } from "../utls.js";
 import Loader from "../common/loader.js";
 import Button from "../common/button.js";
+import Book from "../common/book.js";
+import Wiki from "../common/wiki.js";
 
 const page = () => {
-  const mainNode = document.querySelector("main");
+  const parentNode = document.querySelector("main");
   const loader = new Loader();
   const buttonTest = new Button(document.getElementById("createExecution"));
 
@@ -12,9 +14,19 @@ const page = () => {
     loader.show();
     try {
       const data = await (await fetch(`${baseUrl}/data`)).json();
-      mainNode.appendChild(prettyStrigifyNode(data));
+      
+      new Book({
+        ...data.book.volumeInfo,
+        flag: data.flag,
+        countryName: data.countryName,
+        parentNode,
+      });
+      data.wikiData.pages.forEach((item) => {
+        new Wiki({ ...item, parentNode });
+      });
     } catch (err) {
-      mainNode.appendChild(prettyStrigifyNode(err));
+      console.log(err);
+      parentNode.appendChild(prettyStrigifyNode(err));
     } finally {
       loader.hide();
     }

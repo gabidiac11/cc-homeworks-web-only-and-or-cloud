@@ -9,7 +9,7 @@ const withPromise = (data) => () => {
 };
 
 const getBooksMock = withPromise({
-  status: 500,
+  status: 200,
   headers: {},
   config: {
     url: "https://ceva-books.com",
@@ -176,9 +176,89 @@ const getWikiMock = withPromise({
   config: {
     url: "https://ceva-wikipediat.com",
     method: "get",
-    data: "",
   },
-  data: ` wikipediat data `,
+  data: {
+    pages: [
+      {
+        id: 385829,
+        key: "Kim_Stanley_Robinson",
+        title: "Kim Stanley Robinson",
+        excerpt:
+          'Dream; publicată pentru prima dată în Orbit 19), "The Kingdom Underground" (în Escape from Katmandu) "The Lucky Strike" (în Vinland the Dream; publicată',
+        matched_title: null,
+        description: null,
+        thumbnail: {
+          mimetype: "image/jpeg",
+          size: null,
+          width: 172,
+          height: 200,
+          duration: null,
+          url: "//upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Kim_Stanley_Robinson_2005.JPG/172px-Kim_Stanley_Robinson_2005.JPG",
+        },
+      },
+      {
+        id: 860494,
+        key: "Hayden_White",
+        title: "Hayden White",
+        excerpt:
+          'Interpretation: II (Winter, 1973), pp. 281–314. "Foucault Decoded: Notes from Underground", History and Theory, Vol. 12, No. 1 (1973), pp. 23–54. Metahistory:',
+        matched_title: null,
+        description: "istoric american",
+        thumbnail: {
+          mimetype: "image/jpeg",
+          size: null,
+          width: 150,
+          height: 200,
+          duration: null,
+          url: "//upload.wikimedia.org/wikipedia/commons/thumb/3/32/%E0%B2%B9%E0%B3%87%E0%B2%A1%E0%B2%A8%E0%B3%8D_%E0%B2%B5%E0%B3%88%E0%B2%9F%E0%B3%8D.jpg/150px-%E0%B2%B9%E0%B3%87%E0%B2%A1%E0%B2%A8%E0%B3%8D_%E0%B2%B5%E0%B3%88%E0%B2%9F%E0%B3%8D.jpg",
+        },
+      },
+      {
+        id: 2578592,
+        key: "Vremea_țiganilor",
+        title: "Vremea țiganilor",
+        excerpt:
+          "Gocić, Notes from the underground : the cinema of Emir Kusturica, Wallflower Press, Londra, 2001, p. 65. ^ en Goran Gocić, Notes from the underground : the",
+        matched_title: null,
+        description: "film din 1988 regizat de Emir Kusturica",
+        thumbnail: {
+          mimetype: "image/jpeg",
+          size: null,
+          width: 141,
+          height: 200,
+          duration: null,
+          url: "//upload.wikimedia.org/wikipedia/ro/thumb/d/dd/Dom_za_vesanje.jpg/141px-Dom_za_vesanje.jpg",
+        },
+      },
+      {
+        id: 223845,
+        key: "Punk_rock",
+        title: "Punk rock",
+        excerpt:
+          "0-312-20663-1 Taylor, Steven (2003). False Prophet: Field Notes from the Punk Underground (Middletown, Conn.: Wesleyan University Press). ISBN 0-8195-6668-3",
+        matched_title: null,
+        description: null,
+        thumbnail: {
+          mimetype: "image/jpeg",
+          size: null,
+          width: 200,
+          height: 150,
+          duration: null,
+          url: "//upload.wikimedia.org/wikipedia/commons/thumb/2/2c/The_Dangerfields_in_Monto_London.jpg/200px-The_Dangerfields_in_Monto_London.jpg",
+        },
+      },
+      {
+        id: 788420,
+        key: "Lista_ficțiunilor_apocaliptice_și_postapocaliptice",
+        title: "Lista ficțiunilor apocaliptice și postapocaliptice",
+        excerpt:
+          "'Glen and Randa' Arrives X Rating Belies Film's Philosophical Intent ^ Film Notes -The Hand Maid's Tale ^ Joureny to the Center of time. Badmovieplanet.com",
+        matched_title: null,
+        description: "articol-listă în cadrul unui proiect Wikimedia",
+        thumbnail: null,
+      },
+    ],
+  },
 });
 
 module.exports = {
