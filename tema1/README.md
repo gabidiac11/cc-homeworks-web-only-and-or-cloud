@@ -23,4 +23,6 @@ https://console.developers.google.com/apis/api/books.googleapis.com/metrics?proj
 NOTE: first time you use the token it's not going to work right away. The bad response that is returned will contain a link to a google page, where you need to authorize this token so as to work with Books API 
 
 Get wiki token and agent from here:  
-https://api.wikimedia.org/wiki/Documentation/Getting_started
+https://api.wikimedia.org/wiki/Documentation/Getting_started  
+
+If you want to run the app without using the external API's use `USE_MOCK=true`.
