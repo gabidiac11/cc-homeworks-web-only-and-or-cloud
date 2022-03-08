@@ -4,7 +4,7 @@ const http = require("http");
 const fs = require("fs");
 const router = require("./router");
 const port = require("./constants").port;
-const db = require("./database/db");
+require("./database/db");
 
 const server = http.createServer((req, res) => {
   console.log(`\nNew ${req.method} request at '${req.url}'...`);

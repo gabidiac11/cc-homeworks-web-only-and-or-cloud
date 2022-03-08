@@ -36,9 +36,41 @@ function getResponseHandler(url, method) {
   );
 }
 
-async function getResponse(url, method) {
-  const response = await getResponseHandler(url, method)();
+function extractGetData(url) {
+  return new URL(`https://orice.com${url}`).searchParams;
+}
 
+function extractReqBody(req) {
+  return new Promise((resolve, reject) => {
+    try {
+      let body = "";
+      req.on("data", (chunk) => {
+        body += chunk.toString();
+      });
+      req.on("end", () => {
+        try {
+          const data = JSON.parse(body);
+          if (!data || typeof data !== "object") {
+            throw "NOT AN OBJECT";
+          }
+          resolve(data);
+        } catch (err) {
+          resolve({});
+          console.log(err);
+        }
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+/**
+ * stringifies response data
+ * @param {object} response
+ * @returns
+ */
+function responseDecorator(response) {
   if (typeof response.data !== "string") {
     // handle circular stuff
     try {
@@ -53,7 +85,25 @@ async function getResponse(url, method) {
 
 async function handleRequest(req, res) {
   console.log(`Handle request by router...`);
-  const response = await getResponse(req.url, req.method);
+
+  const handler = getResponseHandler(req.url, req.method);
+  const getData = extractGetData(req.url);
+  const postData = req.method === "POST" ? extractReqBody(req) : undefined;
+
+  let response;
+  try {
+    response = responseDecorator(await handler(getData, postData));
+  } catch (err) {
+    console.log("error response handler", err);
+    response = {
+      headers: { "Content-Type": contentTypes.json },
+      code: 500,
+      data: JSON.stringify({
+        message: "INTERNAL ERROR",
+      }),
+    };
+  }
+
   console.log(`Response:`);
   console.log(response);
 
@@ -97,7 +147,6 @@ function handlePublicResourceReq(req, res, fileName) {
 module.exports = {
   handleRequest,
   getPath,
-  getResponse,
   notFoundHandler,
   getPublicResourceFromUrl,
   handlePublicResourceReq,

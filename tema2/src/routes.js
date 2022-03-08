@@ -1,4 +1,4 @@
-const indexRoutes = require("./controllers/index");
+const indexRoutes = require("./controllers/book");
 
 const routes = [...indexRoutes];
 
