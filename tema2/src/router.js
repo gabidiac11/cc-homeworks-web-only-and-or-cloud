@@ -31,7 +31,7 @@ function getResponseHandler(url, method) {
     routes.find(
       (item) =>
         item.method === method &&
-        (item.path === pathname || (item.regex && item.regex.test(pathname)))
+        ((item.regex && item.regex.test(pathname)) || item.path === pathname)
     )?.handler || notFoundHandler
   );
 }
@@ -92,7 +92,7 @@ async function handleRequest(req, res) {
 
   let response;
   try {
-    response = responseDecorator(await handler(getData, postData));
+    response = responseDecorator(await handler(getData, postData, req.url));
   } catch (err) {
     console.log("error response handler", err);
     response = {
