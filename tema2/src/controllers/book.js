@@ -95,19 +95,19 @@ const postToBookId = async (id) => {
   return utils.notFound("Route not found.");
 };
 
-const patchBook = async (bookId, data) => {
+const patchBook = async (bookId, reqData) => {
   if ((await BookModel.getById(bookId)).length === 0) {
     return utils.notFound(`Book with id ${bookId} not found`);
   }
 
   // safely extract category ids
   const categoryIds = await BookModel.extractAndDecorateCatIdsInput(
-    postData["categoryIds"]
+    reqData["categoryIds"]
   );
   // safely extract book properties
-  const bookInput = BookModel.validateAndDecorateBookInput(data, true);
+  const bookInput = BookModel.validateAndDecorateBookInput(reqData, true);
 
-  await BookModel.updateBookEntity(bookInput, bookId);
+  await BookModel.patchBookEntity(bookInput, bookId);
   await BookModel.removeBookCategoriesIfAny(bookId, categoryIds);
   await BookModel.addCategories(bookId, categoryIds);
 
@@ -167,6 +167,14 @@ module.exports = [
     handler: (get, data, url) => {
       const matched = url.match(/\/api\/books\/([\d]+)$/);
       return updateOrReplaceBook(matched[1], data);
+    },
+  },
+  {
+    regex: /\/api\/books\/([\d]+)$/,
+    method: "PATCH",
+    handler: (get, data, url) => {
+      const matched = url.match(/\/api\/books\/([\d]+)$/);
+      return patchBook(matched[1], data);
     },
   },
 ];

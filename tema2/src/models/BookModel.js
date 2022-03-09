@@ -1,6 +1,14 @@
 const db = require("../database/db");
 const utils = require("./../utils");
 
+const bookUpdableProperties = [
+  "author",
+  "title",
+  "publishedDate",
+  "description",
+  "thumbnail",
+];
+
 class BookModel {
   get = async ({ page, length, searchQuery, sortBy, direction }) => {
     const params = [];
@@ -91,6 +99,35 @@ class BookModel {
     );
   };
 
+  patchBookEntity = async (item, bookId) => {
+    const commands = [
+      { q: "author =?", value: item.author },
+      { q: "title =?", value: item.title },
+      { q: "publishedDate =?", value: item.publishedDate },
+      { q: "description =?", value: item.description },
+      { q: "thumbnail =?", value: item.thumbnail },
+      // filter out values that indicate no update
+    ].filter((i) => i.value !== null && i.value !== undefined);
+
+    if (commands.length === 0) {
+      return Promise.resolve();
+    }
+
+    await db.sql(
+      `UPDATE 
+          books SET
+                ${commands.reduce((prev, curr, index) => {
+                  const value = !prev ? curr.q : prev + curr.q;
+                  if (index < commands.length - 1) {
+                    return value + ",";
+                  }
+                  return value;
+                }, "")}
+          WHERE bookId=?`,
+      [...commands.map((i) => i.value), bookId]
+    );
+  };
+
   removeAllBookCategories = (bookId) =>
     db.sql(`DELETE FROM bookCategoryMap WHERE bookId = ?`, [bookId]);
 
@@ -99,7 +136,7 @@ class BookModel {
       return Promise.resolve();
     }
     return db.sql(
-      `DELETE * FROM bookCategoryMap WHERE bookId = ? AND categoryId IN(${categoryIds.join(
+      `DELETE FROM bookCategoryMap WHERE bookId = ? AND categoryId IN(${categoryIds.join(
         ","
       )})`,
       [bookId]
@@ -147,7 +184,9 @@ class BookModel {
       );
       if (!items.length) {
         throw {
-          myHTTPResponse: utils.badRequest(`Category id ${el} doesn't point to any category.`),
+          myHTTPResponse: utils.badRequest(
+            `Category id ${el} doesn't point to any category.`
+          ),
         };
       }
     }
@@ -164,15 +203,8 @@ class BookModel {
    */
   validateAndDecorateBookInput = (item, forPatching) => {
     const output = {};
-    const properties = [
-      "author",
-      "title",
-      "publishedDate",
-      "description",
-      "thumbnail",
-    ];
 
-    for (let name of properties) {
+    for (let name of bookUpdableProperties) {
       if (item[name] === undefined && forPatching) {
         continue;
       }
