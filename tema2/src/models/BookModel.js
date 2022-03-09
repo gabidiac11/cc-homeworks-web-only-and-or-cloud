@@ -234,6 +234,11 @@ class BookModel {
 
     return output;
   };
+
+  deleteBook = (bookId) =>
+    db.sql(`DELETE FROM books WHERE bookId = ?`, [bookId]);
+
+  deleteAllBooks = () => db.sql(`DELETE FROM books WHERE 1`);
 }
 
 module.exports = new BookModel();

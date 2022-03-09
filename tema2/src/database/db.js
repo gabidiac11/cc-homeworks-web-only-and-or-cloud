@@ -75,7 +75,7 @@ class ChacheBasedSingleton {
       await this.sql(query);
     }
 
-    if ((await this.select("SELECT COUNT(*) FROM books"))[0]["COUNT(*)"] > 0) {
+    if ((await this.select("SELECT COUNT(*) FROM bookCategories"))[0]["COUNT(*)"] > 0) {
       console.log("\nSEED not required.\n");
       return;
     }

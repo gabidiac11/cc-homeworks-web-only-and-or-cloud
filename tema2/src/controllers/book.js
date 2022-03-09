@@ -134,6 +134,34 @@ const updateOrReplaceBook = async (bookId, reqData) => {
   return getSingleBook(bookId);
 };
 
+const deleteById = async (bookId) => {
+  if ((await BookModel.getById(bookId)).length === 0) {
+    return utils.notFound("Book not found.");
+  }
+
+  await BookModel.deleteBook(bookId);
+
+  return {
+    headers: {
+      "Content-Type": contentTypes.json,
+    },
+    code: 200,
+    data: {},
+  };
+};
+
+const deleteAllBooks = async () => {
+  await BookModel.deleteAllBooks();
+  
+  return {
+    headers: {
+      "Content-Type": contentTypes.json,
+    },
+    code: 200,
+    data: {},
+  };
+};
+
 module.exports = [
   {
     regex: /\/api\/books\/([\d]+)$/,
@@ -176,5 +204,18 @@ module.exports = [
       const matched = url.match(/\/api\/books\/([\d]+)$/);
       return patchBook(matched[1], data);
     },
+  },
+  {
+    regex: /\/api\/books\/([\d]+)$/,
+    method: "DELETE",
+    handler: (get, data, url) => {
+      const matched = url.match(/\/api\/books\/([\d]+)$/);
+      return deleteById(matched[1]);
+    },
+  },
+  {
+    path: "/api/books",
+    method: "DELETE",
+    handler: deleteAllBooks,
   },
 ];
