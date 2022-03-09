@@ -7,6 +7,7 @@ const utils = require("./utils");
 const contentTypes = consts.contentTypes;
 const pubDirName = path.join(__dirname, "../public");
 const routes = require("./routes").routes;
+const ers = consts.errorMessages;
 
 const notFoundHandler = () =>
   new Promise((resolve) =>
@@ -55,7 +56,7 @@ function extractReqBody(req) {
           resolve(data);
         } catch (err) {
           reject({
-            myHTTPResponse: utils.badRequest("BAD json request body"),
+            myHTTPResponse: utils.badRequest(ers.BAD_REQUEST_BODY),
           });
         }
       });

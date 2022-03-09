@@ -16,7 +16,7 @@ const contentTypes = {
 };
 
 const errorMessages = {
-  BAD_REQUEST_BODY: "BAD_REQUEST_BODY",
+  BAD_REQUEST_BODY: "BAD json request body",
 };
 
 const baseUrl = "http://localhost:5000/api";
