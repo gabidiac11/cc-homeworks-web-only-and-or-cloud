@@ -19,13 +19,13 @@ class ChacheBasedSingleton {
     console.log(`Executed query stmt... "${query}"`);
 
     return new Promise((resolve) => {
-      this.db.run(query, params, (err, something) => {
+      this.db.run(query, params, function (err) {
         if (err) {
           console.error(err);
           throw err;
         }
 
-        resolve(something);
+        resolve(this);
       });
     });
   };

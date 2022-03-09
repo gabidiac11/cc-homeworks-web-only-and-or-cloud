@@ -2,7 +2,9 @@
 
 const fs = require("fs");
 const path = require("path");
-const contentTypes = require("./constants").contentTypes;
+const consts = require("./constants");
+const utils = require("./utils");
+const contentTypes = consts.contentTypes;
 const pubDirName = path.join(__dirname, "../public");
 const routes = require("./routes").routes;
 
@@ -50,13 +52,11 @@ function extractReqBody(req) {
       req.on("end", () => {
         try {
           const data = JSON.parse(body);
-          if (!data || typeof data !== "object") {
-            throw "NOT AN OBJECT";
-          }
           resolve(data);
         } catch (err) {
-          resolve({});
-          console.log(err);
+          reject({
+            myHTTPResponse: utils.badRequest("BAD json request body"),
+          });
         }
       });
     } catch (error) {
@@ -88,20 +88,17 @@ async function handleRequest(req, res) {
 
   const handler = getResponseHandler(req.url, req.method);
   const getData = extractGetData(req.url);
-  const postData = req.method === "POST" ? extractReqBody(req) : undefined;
-
   let response;
   try {
+    const postData = ["POST", "PUT", "PATCH"].some((i) => i === req.method)
+      ? await extractReqBody(req)
+      : undefined;
     response = responseDecorator(await handler(getData, postData, req.url));
   } catch (err) {
     console.log("error response handler", err);
-    response = {
-      headers: { "Content-Type": contentTypes.json },
-      code: 500,
-      data: JSON.stringify({
-        message: "INTERNAL ERROR",
-      }),
-    };
+    response = responseDecorator(
+      err.myHTTPResponse ? err.myHTTPResponse : utils.internalError()
+    );
   }
 
   console.log(`Response:`);

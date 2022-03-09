@@ -15,7 +15,15 @@ const contentTypes = {
   js: "application/javascript",
 };
 
+const errorMessages = {
+  BAD_REQUEST_BODY: "BAD_REQUEST_BODY",
+};
+
+const baseUrl = "http://localhost:5000/api";
+
 module.exports = {
   port,
   contentTypes,
+  errorMessages,
+  baseUrl,
 };
