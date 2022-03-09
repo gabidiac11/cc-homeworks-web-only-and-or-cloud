@@ -1,0 +1,180 @@
+{
+	"info": {
+		"_postman_id": "60d81337-90b7-46a3-9975-f1801d35ae49",
+		"name": "CC-Homework-2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Books",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/books?page=1&searchQuery=fyo&length=3&sortBy=title&direction=desc",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"books"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "searchQuery",
+							"value": "fyo"
+						},
+						{
+							"key": "length",
+							"value": "3"
+						},
+						{
+							"key": "sortBy",
+							"value": "title"
+						},
+						{
+							"key": "direction",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Books/{id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/books/34",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"books",
+						"34"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Books",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"author\": \"Diac Gabriel\",\r\n    \"title\": \"One day maybe\",\r\n    \"publishedDate\": \"2017-02-24\",\r\n    \"description\": \"A new book with description\",\r\n    \"thumbnail\": \"https://sbooks.net/wp-content/uploads/2021/10/old-book-flying-letters-magic-light-background-bookshelf-library-ancient-books-as-symbol-knowledge-history-218640948.jpg\",\r\n    \"categoryIds\": [\r\n        \"1\", \"2\"\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/books",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Books/{id}",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"author\": \"Diac Gabriel\",\r\n    \"title\": \"One day maybe\",\r\n    \"publishedDate\": \"2017-02-24\",\r\n    \"description\": \"A new book with description\",\r\n    \"thumbnail\": \"https://sbooks.net/wp-content/uploads/2021/10/old-book-flying-letters-magic-light-background-bookshelf-library-ancient-books-as-symbol-knowledge-history-218640948.jpg\",\r\n    \"categoryIds\": [\r\n        \"1\", \"28\"\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/books/3",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"books",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Books/{id}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"author\": \"Diac Gabriel\",\r\n    \"title\": \"One day maybe\",\r\n    \"thumbnail\": \"https://sbooks.net/wp-content/uploads/2021/10/old-book-flying-letters-magic-light-background-bookshelf-library-ancient-books-as-symbol-knowledge-history-218640948.jpg\",\r\n    \"categoryIds\": [\r\n        \"1\"\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/books/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"books",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Books/{id}",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"author\": \"Diac Gabriel\",\r\n    \"title\": \"One day maybe\",\r\n    \"thumbnail\": \"https://sbooks.net/wp-content/uploads/2021/10/old-book-flying-letters-magic-light-background-bookshelf-library-ancient-books-as-symbol-knowledge-history-218640948.jpg\",\r\n    \"categoryIds\": [\r\n        \"3\"\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/books/3",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"books",
+						"3"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000/api",
+			"type": "default"
+		}
+	]
+}
