@@ -11,7 +11,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/books?page=1&searchQuery=fyo&length=3&sortBy=tittle&direction=desc",
+					"raw": "{{baseUrl}}/books?page=1&length=40",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -24,20 +24,8 @@
 							"value": "1"
 						},
 						{
-							"key": "searchQuery",
-							"value": "fyo"
-						},
-						{
 							"key": "length",
-							"value": "3"
-						},
-						{
-							"key": "sortBy",
-							"value": "tittle"
-						},
-						{
-							"key": "direction",
-							"value": "desc"
+							"value": "40"
 						}
 					]
 				}
@@ -106,6 +94,27 @@
 			"response": []
 		},
 		{
+			"name": "Books",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\r\n    \"bookId\": \"1\",\r\n    \"author\": \"Diac Gabriel\",\r\n    \"title\": \"One day maybe\",\r\n    \"thumbnail\": \"https://sbooks.net/wp-content/uploads/2021/10/old-book-flying-letters-magic-light-background-bookshelf-library-ancient-books-as-symbol-knowledge-history-218640948.jpg\",\r\n    \"categoryIds\": [\r\n        \"3\"\r\n    ]\r\n}]"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/books",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Books/{id}",
 			"request": {
 				"method": "PATCH",
@@ -122,6 +131,27 @@
 					"path": [
 						"books",
 						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Books",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"bookId\": 1,\r\n        \"author\": \"Fyodor Dostoevsky\",\r\n        \"title\": \"Notes from Underground\",\r\n        \"thumbnail\": \"http://books.google.com/books/content?id=iPPFCsEZVd0C&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_lp_bookshelf_list\",\r\n        \"categoryIds\": [\"1\"]\r\n    }\r\n]"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/books",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"books"
 					]
 				}
 			},
@@ -183,6 +213,28 @@
 					],
 					"path": [
 						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Books/{id} Copy",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"author\": \"Diac Gabriel\",\r\n    \"title\": \"One day maybe\",\r\n    \"thumbnail\": \"https://sbooks.net/wp-content/uploads/2021/10/old-book-flying-letters-magic-light-background-bookshelf-library-ancient-books-as-symbol-knowledge-history-218640948.jpg\",\r\n    \"categoryIds\": [\r\n        \"3\"\r\n    ]\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/books/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"books",
+						"1"
 					]
 				}
 			},
