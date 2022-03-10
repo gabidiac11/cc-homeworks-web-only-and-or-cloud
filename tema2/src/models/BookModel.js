@@ -171,7 +171,7 @@ class BookModel {
     if (badElem > -1) {
       throw {
         myHTTPResponse: utils.badRequest(
-          `Element at index ${badElem} is invalid`
+          `Category id: ${categoryIds[badElem]} is invalid`
         ),
       };
     }
@@ -235,10 +235,22 @@ class BookModel {
     return output;
   };
 
-  deleteBook = (bookId) =>
-    db.sql(`DELETE FROM books WHERE bookId = ?`, [bookId]);
+  deleteBook = async (bookId) => {
+    await db.sql(`DELETE FROM books WHERE bookId = ?`, [bookId]);
+    await db.sql(`DELETE FROM bookCategoryMap WHERE bookId = ?`, [bookId]);
+  }
+    
+  deleteAllBooks = async () => {
+    await db.sql(`DELETE FROM books WHERE 1`);
+    await db.sql(`DELETE FROM bookCategoryMap WHERE 1`);
+  }
 
-  deleteAllBooks = () => db.sql(`DELETE FROM books WHERE 1`);
+  deleteAllBooksExeptIds = async (ids) => {
+    if(ids.length === 0) {
+      return Promise.resolve();
+    }
+    await db.sql(`DELETE FROM books WHERE bookId NOT IN(${ids.join(",")})`);
+  } 
 }
 
 module.exports = new BookModel();

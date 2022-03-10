@@ -114,7 +114,7 @@ const patchBook = async (bookId, reqData) => {
   return getSingleBook(bookId);
 };
 
-const updateOrReplaceBook = async (bookId, reqData) => {
+const putUpdateOrReplaceBook = async (bookId, reqData) => {
   if ((await BookModel.getById(bookId)).length === 0) {
     return utils.notFound(`Book with id ${bookId} not found`);
   }
@@ -152,7 +152,102 @@ const deleteById = async (bookId) => {
 
 const deleteAllBooks = async () => {
   await BookModel.deleteAllBooks();
-  
+
+  return {
+    headers: {
+      "Content-Type": contentTypes.json,
+    },
+    code: 200,
+    data: {},
+  };
+};
+
+const extractAndValidateBookItems = async (data, usePatch) => {
+  if (!Array.isArray(data)) {
+    throw {
+      myHTTPResponse: utils.badRequest(`Request data should be a list.`),
+    };
+  }
+
+  // may reject bad stucture
+  let badIndex = data.findIndex((i) => !i || typeof i !== "object");
+  if (badIndex > -1) {
+    throw {
+      myHTTPResponse: utils.badRequest(`Bad item at index ${badIndex}.`),
+    };
+  }
+
+  // may reject attempts at injection or passing bad bookIds
+  badIndex = data.findIndex((i) => !Number.isInteger(Number(String(i.bookId))));
+  if (badIndex > -1) {
+    throw {
+      myHTTPResponse: utils.badRequest(`Bad id at index ${badIndex}.`),
+    };
+  }
+
+  // may reject bookIds that point to non-existing books
+  // safely extract data about the book from input
+  const output = [];
+  for (let rawInput of data) {
+    if ((await BookModel.getById(rawInput.bookId)).length === 0) {
+      throw {
+        myHTTPResponse: utils.notFound(
+          `Books with id ${rawInput.bookId} not found.`
+        ),
+      };
+    }
+
+    // safely extract category ids
+    const cotegories = await BookModel.extractAndDecorateCatIdsInput(
+      rawInput["categoryIds"]
+    );
+    // safely extract book properties
+    const bookInput = await BookModel.validateAndDecorateBookInput(
+      rawInput,
+      usePatch
+    );
+    bookInput["bookId"] = rawInput.bookId;
+
+    output.push([cotegories, bookInput]);
+  }
+
+  return output;
+};
+
+const putAllBooks = async (data) => {
+  const processedItems = await extractAndValidateBookItems(data);
+
+  for (let item of processedItems) {
+    const [categoryIds, bookInput] = item;
+    const bookId = bookInput.bookId;
+
+    await BookModel.updateBookEntity(bookInput, bookId);
+    await BookModel.removeAllBookCategories(bookId);
+    await BookModel.addCategories(bookId, categoryIds);
+  }
+  await BookModel.deleteAllBooksExeptIds(processedItems.map(i => i[1].bookId));
+
+  return {
+    headers: {
+      "Content-Type": contentTypes.json,
+    },
+    code: 200,
+    data: {},
+  };
+};
+
+const patchAllBooks = async (data) => {
+  const processedItems = await extractAndValidateBookItems(data, true);
+
+  for (let item of processedItems) {
+    const [categoryIds, bookInput] = item;
+    const bookId = bookInput.bookId;
+
+    await BookModel.patchBookEntity(bookInput, bookId);
+    await BookModel.removeBookCategoriesIfAny(bookId, categoryIds);
+    await BookModel.addCategories(bookId, categoryIds);
+  }
+
   return {
     headers: {
       "Content-Type": contentTypes.json,
@@ -194,7 +289,7 @@ module.exports = [
     method: "PUT",
     handler: (get, data, url) => {
       const matched = url.match(/\/api\/books\/([\d]+)$/);
-      return updateOrReplaceBook(matched[1], data);
+      return putUpdateOrReplaceBook(matched[1], data);
     },
   },
   {
@@ -217,5 +312,19 @@ module.exports = [
     path: "/api/books",
     method: "DELETE",
     handler: deleteAllBooks,
+  },
+  {
+    path: "/api/books",
+    method: "PUT",
+    handler: (get, data, url) => {
+      return putAllBooks(data);
+    },
+  },
+  {
+    path: "/api/books",
+    method: "PATCH",
+    handler: (get, data, url) => {
+      return patchAllBooks(data);
+    },
   },
 ];
